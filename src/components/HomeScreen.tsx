@@ -1,35 +1,21 @@
 import { useState } from "react";
-import { Bell, Search, MapPin, Star, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bell, MapPin, Plus, Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { mockItems, CATEGORIES } from "@/data/mockData";
 import type { FoundItem } from "@/data/mockData";
+import { categoryIcons, itemIcons } from "@/lib/icon-registry";
+import InitialAvatar from "@/components/InitialAvatar";
 
 interface HomeScreenProps {
   onNavigate: (screen: string, itemId?: string) => void;
   hasNotification?: boolean;
 }
 
-const categoryIcons: Record<string, string> = {
-  Todos: '📋',
-  Documentos: '📄',
-  Electrónica: '📱',
-  Llaves: '🔑',
-  Ropa: '👕',
-  Mascotas: '🐾',
-  Otros: '📦',
-};
-
-const itemImages: Record<string, string> = {
-  Llaves: '🔑',
-  Electrónica: '📱',
-  Documentos: '📄',
-  Otros: '🎒',
-  Ropa: '👕',
-  Mascotas: '🐾',
-};
+const ease = [0.16, 1, 0.3, 1] as const;
 
 const HomeScreen = ({ onNavigate, hasNotification = true }: HomeScreenProps) => {
   const [activeFilter, setActiveFilter] = useState("Todos");
@@ -37,80 +23,146 @@ const HomeScreen = ({ onNavigate, hasNotification = true }: HomeScreenProps) => 
 
   const filteredItems = mockItems.filter((item) => {
     const matchesCategory = activeFilter === "Todos" || item.category === activeFilter;
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = !q || item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <div className="px-4 pt-4 pb-2 bg-card border-b border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h1 className="text-xl font-black text-foreground">NO ME LO RETAI</h1>
-            <p className="text-xs text-muted-foreground font-semibold">Objetos encontrados cerca de ti</p>
-          </div>
-          <button className="relative p-2 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors">
-            <Bell className="w-5 h-5 text-foreground" />
+      <div className="border-b border-border/60 bg-card/90 px-4 pt-5 pb-3 backdrop-blur-sm">
+        <div className="mb-4 flex items-start justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease }}
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary/70">Red local</p>
+            <h1 className="mt-0.5 text-2xl font-extrabold tracking-tight text-foreground">FoundFast</h1>
+            <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
+              <span>Hallazgos en Pasto</span>
+            </div>
+          </motion.div>
+
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1, ease }}
+            whileTap={{ scale: 0.9 }}
+            type="button"
+            className="relative rounded-2xl border border-border/60 bg-card p-3 shadow-sm transition-all hover:bg-secondary/70"
+          >
+            <Bell className="h-5 w-5 text-foreground" />
             {hasNotification && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" />
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.4 }}
+                className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-card"
+              />
             )}
-          </button>
+          </motion.button>
         </div>
 
         {/* Search */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar objeto perdido..."
+            placeholder="Busca por objeto o referencia"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10 rounded-xl bg-secondary border-0"
+            className="h-11 rounded-2xl border-border/60 bg-background pl-10 text-sm shadow-sm transition-shadow focus:shadow-[0_0_0_3px_hsl(var(--ring)/0.12)]"
           />
         </div>
 
-        {/* Filter chips */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-          {CATEGORIES.map((cat) => (
-            <button
+        {/* Category filters */}
+        <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-hide">
+          {CATEGORIES.map((cat, i) => (
+            <motion.button
               key={cat}
+              type="button"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.15 + i * 0.04, ease }}
+              whileTap={{ scale: 0.94 }}
               onClick={() => setActiveFilter(cat)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-all ${
                 activeFilter === cat
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                  : "border-border/60 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
               }`}
             >
-              <span>{categoryIcons[cat]}</span>
+              {(() => {
+                const Icon = categoryIcons[cat];
+                return <Icon className="h-3.5 w-3.5" />;
+              })()}
               {cat}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Items list */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 pb-24">
-        {filteredItems.map((item) => (
-          <ItemCard key={item.id} item={item} onTap={() => onNavigate("claim", item.id)} />
-        ))}
-        {filteredItems.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <span className="text-5xl mb-3">🔍</span>
-            <p className="font-semibold">No se encontraron objetos</p>
-            <p className="text-sm">Intenta con otra búsqueda o categoría</p>
-          </div>
-        )}
+      <div className="relative flex-1 overflow-y-auto px-4 py-4 pb-28">
+        <AnimatePresence mode="popLayout">
+          {filteredItems.length > 0 ? (
+            <motion.div className="space-y-3">
+              {filteredItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                  transition={{ duration: 0.32, delay: index * 0.04, ease }}
+                >
+                  <ItemCard item={item} onTap={() => onNavigate("claim", item.id)} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease }}
+              className="flex flex-col items-center justify-center rounded-[28px] border border-dashed border-border bg-card/60 px-6 py-16 text-center"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Search className="h-6 w-6" />
+              </div>
+              <p className="mt-4 text-base font-bold text-foreground">No se encontraron objetos</p>
+              <p className="mt-1 text-sm text-muted-foreground">Intenta con otra búsqueda o categoría</p>
+              <button
+                type="button"
+                onClick={() => onNavigate("publish")}
+                className="mt-5 text-sm font-semibold text-primary underline-offset-2 hover:underline"
+              >
+                Publica el primero
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* FAB */}
       <div className="absolute bottom-20 right-4">
-        <Button
-          onClick={() => onNavigate("publish")}
-          className="h-14 px-5 rounded-2xl shadow-xl shadow-primary/30 font-bold text-sm gap-2 active:scale-95 transition-transform"
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.25 }}
+          whileTap={{ scale: 0.94 }}
         >
-          <Plus className="w-5 h-5" />
-          ENCONTRÉ ALGO
-        </Button>
+          <Button
+            onClick={() => onNavigate("publish")}
+            className="h-14 gap-2 rounded-2xl px-5 text-sm font-bold shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40"
+          >
+            <Plus className="h-5 w-5" />
+            Reportar hallazgo
+          </Button>
+        </motion.div>
       </div>
     </div>
   );
@@ -118,39 +170,51 @@ const HomeScreen = ({ onNavigate, hasNotification = true }: HomeScreenProps) => 
 
 const ItemCard = ({ item, onTap }: { item: FoundItem; onTap: () => void }) => (
   <Card
-    className="p-3 flex gap-3 cursor-pointer hover:shadow-md transition-all active:scale-[0.98] border-border/60"
+    className="cursor-pointer rounded-[22px] border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.25)] active:scale-[0.99]"
     onClick={onTap}
   >
-    <div className="w-20 h-20 rounded-xl bg-secondary flex items-center justify-center text-3xl flex-shrink-0">
-      {itemImages[item.category] || '📦'}
-    </div>
-    <div className="flex-1 min-w-0">
-      <h3 className="font-bold text-sm text-foreground line-clamp-1">{item.title}</h3>
-      <div className="flex items-center gap-1 mt-1 text-muted-foreground">
-        <MapPin className="w-3 h-3" />
-        <span className="text-xs truncate">{item.location}</span>
+    <div className="flex gap-4">
+      <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-[18px] bg-primary/10 text-primary">
+        {(() => {
+          const Icon = itemIcons[item.category] || itemIcons.Otros;
+          return <Icon className="h-8 w-8" />;
+        })()}
       </div>
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex items-center gap-1.5">
-          <span className="text-lg">{item.finder.avatar}</span>
-          <span className="text-xs font-semibold text-foreground">{item.finder.name}</span>
-          <div className="flex items-center gap-0.5">
-            <Star className="w-3 h-3 fill-reward text-reward" />
-            <span className="text-xs font-bold text-reward-foreground">{item.finder.rating}</span>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">{item.title}</h3>
+            <div className="mt-1.5 flex items-center gap-1 text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              <span className="text-xs">{item.location}</span>
+            </div>
           </div>
+          <Badge
+            className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${
+              item.status === "unclaimed"
+                ? "border-accent/30 bg-accent/15 text-accent-foreground"
+                : "border-primary/20 bg-primary/10 text-primary"
+            }`}
+          >
+            {item.status === "unclaimed" ? "Sin reclamar" : `${item.claims} reclamos`}
+          </Badge>
         </div>
-        <Badge
-          variant={item.status === 'unclaimed' ? 'secondary' : 'default'}
-          className={`text-[10px] ${
-            item.status === 'unclaimed'
-              ? 'bg-accent/15 text-accent border-accent/30'
-              : 'bg-primary/10 text-primary border-primary/30'
-          }`}
-        >
-          {item.status === 'unclaimed' ? 'Sin reclamar' : `${item.claims} reclamos`}
-        </Badge>
+
+        <div className="mt-3.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <InitialAvatar initials={item.finder.initials} className="h-8 w-8 rounded-xl" textClassName="text-[10px] tracking-[0.16em]" />
+            <div>
+              <p className="text-xs font-semibold text-foreground">{item.finder.name}</p>
+              <div className="flex items-center gap-0.5">
+                <Star className="h-3 w-3 fill-accent text-accent" />
+                <span className="text-xs font-bold text-foreground">{item.finder.rating}</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-[11px] text-muted-foreground">{item.timeAgo}</p>
+        </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mt-1">{item.timeAgo}</p>
     </div>
   </Card>
 );

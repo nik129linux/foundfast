@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,41 +6,41 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    --background: 200 60% 97%;
+    --foreground: 222 47% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 222 47% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 222 47% 14%;
 
-    --primary: 217 91% 50%;
+    --primary: 186 84% 43%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 30% 95%;
-    --secondary-foreground: 215 25% 25%;
+    --secondary: 200 50% 94%;
+    --secondary-foreground: 222 30% 25%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 200 30% 92%;
+    --muted-foreground: 220 14% 46%;
 
-    --accent: 32 95% 55%;
+    --accent: 330 82% 62%;
     --accent-foreground: 0 0% 100%;
 
-    --reward: 45 100% 50%;
-    --reward-foreground: 30 50% 15%;
+    --reward: 48 96% 56%;
+    --reward-foreground: 24 54% 18%;
 
-    --success: 152 60% 42%;
+    --success: 156 62% 40%;
     --success-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 25% 90%;
-    --input: 214 25% 90%;
-    --ring: 217 91% 50%;
+    --border: 200 30% 88%;
+    --input: 200 30% 88%;
+    --ring: 186 84% 43%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -53,25 +53,25 @@
   }
 
   .dark {
-    --background: 222 30% 8%;
+    --background: 202 28% 10%;
     --foreground: 210 40% 98%;
-    --card: 222 30% 12%;
+    --card: 202 28% 13%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 30% 12%;
+    --popover: 202 28% 13%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
+    --primary: 195 52% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 32% 17%;
+    --secondary: 202 18% 18%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 32% 17%;
+    --muted: 202 18% 18%;
     --muted-foreground: 215 20% 65%;
-    --accent: 32 95% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 34 84% 55%;
+    --accent-foreground: 24 54% 18%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 217 91% 60%;
+    --border: 202 16% 20%;
+    --input: 202 16% 20%;
+    --ring: 195 52% 58%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -89,7 +89,8 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    font-family: 'Nunito', system-ui, sans-serif;
   }
 }
 

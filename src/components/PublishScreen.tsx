@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Camera, MapPin, Calendar, AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Calendar, Camera, CircleCheck, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CATEGORIES } from "@/data/mockData";
+import { categoryIcons } from "@/lib/icon-registry";
 
 interface PublishScreenProps {
   onBack: () => void;
@@ -17,28 +18,40 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
   const [photos, setPhotos] = useState<number[]>([]);
 
   const categories = CATEGORIES.filter((c) => c !== "Todos");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handlePublish = () => {
+    const newErrors: Record<string, string> = {};
+    if (!title.trim()) newErrors.title = "El título es obligatorio";
+    if (!selectedCategory) newErrors.category = "Selecciona una categoría";
+    if (!location.trim()) newErrors.location = "La ubicación es obligatoria";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     onPublish();
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-4 pb-3 bg-card border-b border-border">
-        <button onClick={onBack} className="p-2 rounded-xl hover:bg-secondary transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
+    <div className="flex h-full flex-col bg-background">
+      <div className="flex items-center gap-3 border-b border-border/70 bg-card/95 px-4 pt-4 pb-3 backdrop-blur">
+        <button type="button" onClick={onBack} className="rounded-2xl p-2 transition-colors hover:bg-secondary">
+          <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
         <h1 className="text-lg font-black text-foreground">Publicar Hallazgo</h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 pb-8">
-        {/* Photo upload area */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">📸 Fotos del objeto</label>
+      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 pb-8">
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-bold text-foreground">
+            <Camera className="h-4 w-4 text-primary" />
+            Fotos del objeto
+          </label>
           <div className="grid grid-cols-4 gap-2">
             {[0, 1, 2, 3].map((i) => (
               <button
+                type="button"
                 key={i}
                 className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${
                   photos.includes(i)
@@ -51,95 +64,97 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
                   )
                 }
               >
-                <Camera className={`w-5 h-5 ${photos.includes(i) ? "text-primary" : "text-muted-foreground"}`} />
-                {photos.includes(i) && <span className="text-[10px] font-bold text-primary mt-0.5">✓</span>}
+                <Camera className={`h-5 w-5 ${photos.includes(i) ? "text-primary" : "text-muted-foreground"}`} />
+                {photos.includes(i) && <CircleCheck className="mt-1 h-3.5 w-3.5 text-primary" />}
               </button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-1">Máximo 4 fotos</p>
         </div>
 
-        {/* Category */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">📂 Categoría</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground">Categoría</label>
+          {errors.category && <p role="alert" className="text-xs text-destructive">{errors.category}</p>}
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
+                type="button"
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold transition-all ${
                   selectedCategory === cat
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? "border-primary bg-primary text-primary-foreground shadow-md"
+                    : "border-border/70 bg-card text-secondary-foreground hover:bg-secondary/80"
                 }`}
               >
+                {(() => {
+                  const Icon = categoryIcons[cat];
+                  return <Icon className="h-3.5 w-3.5" />;
+                })()}
                 {cat}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Title */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">✏️ Título</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground">Título</label>
+          {errors.title && <p role="alert" className="text-xs text-destructive">{errors.title}</p>}
           <Input
             placeholder="Ej: Llavero con 3 llaves"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="h-11 rounded-xl bg-card"
+            className="h-11 rounded-2xl bg-card"
           />
         </div>
 
-        {/* Description */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">📝 Descripción</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground">Descripción</label>
           <textarea
             placeholder="Describe el objeto con detalle para que su dueño lo reconozca..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full h-24 rounded-xl border border-input bg-card px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+            className="h-28 w-full resize-none rounded-2xl border border-input bg-card px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
-          <div className="flex items-start gap-2 mt-2 p-2.5 bg-accent/10 rounded-lg border border-accent/20">
-            <AlertTriangle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+          <div className="mt-2 flex items-start gap-2 rounded-2xl border border-accent/20 bg-accent/10 p-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent" />
             <p className="text-xs text-accent font-semibold">
-              Por seguridad, NO incluyas datos sensibles ni fotos de documentos completos
+              Por seguridad, no incluyas datos sensibles ni fotos de documentos completos.
             </p>
           </div>
         </div>
 
-        {/* Location */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">📍 Ubicación</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground">Ubicación</label>
+          {errors.location && <p role="alert" className="text-xs text-destructive">{errors.location}</p>}
           <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="¿Dónde lo encontraste?"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="pl-10 h-11 rounded-xl bg-card"
+              className="h-11 rounded-2xl bg-card pl-10"
             />
           </div>
         </div>
 
-        {/* Date */}
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">📅 Fecha del hallazgo</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground">Fecha del hallazgo</label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="date"
               defaultValue="2026-03-24"
-              className="pl-10 h-11 rounded-xl bg-card"
+              className="h-11 rounded-2xl bg-card pl-10"
             />
           </div>
         </div>
 
-        {/* Publish button */}
         <Button
           onClick={handlePublish}
-          className="w-full h-12 rounded-xl text-base font-bold shadow-lg shadow-primary/25 active:scale-[0.98] transition-all"
+          className="h-12 w-full rounded-2xl text-base font-bold shadow-lg shadow-primary/25 transition-all active:scale-[0.98]"
         >
-          🤝 Publicar Hallazgo
+          Publicar Hallazgo
         </Button>
       </div>
     </div>

@@ -1,105 +1,174 @@
-import { MapPin, Calendar, Star, Trophy, Gift, Award } from "lucide-react";
+import { motion } from "framer-motion";
+import { Award, BadgeCheck, Calendar, Gift, MapPin, Package, Star, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { mockUser, mockRewards } from "@/data/mockData";
+import { badgeIcons } from "@/lib/icon-registry";
+import InitialAvatar from "@/components/InitialAvatar";
+import RewardBrandLogo from "@/components/RewardBrandLogo";
+
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const stats = [
+  { value: mockUser.stats.returns, label: "Devoluciones", Icon: BadgeCheck, color: "text-primary bg-primary/10" },
+  { value: mockUser.stats.recoveries, label: "Recuperaciones", Icon: Package, color: "text-accent-foreground bg-accent/15" },
+  { value: mockUser.stats.rating, label: "Calificación", Icon: Star, color: "text-primary bg-primary/10" },
+];
 
 const ProfileScreen = () => {
   return (
-    <div className="flex flex-col h-full bg-background overflow-y-auto pb-24">
-      {/* Profile header */}
-      <div className="bg-gradient-to-b from-primary to-primary/80 px-4 pt-6 pb-8 text-center">
-        <div className="w-20 h-20 rounded-full bg-card mx-auto flex items-center justify-center text-4xl shadow-xl border-4 border-card">
-          {mockUser.avatar}
-        </div>
-        <h2 className="text-xl font-black text-primary-foreground mt-3">{mockUser.name}</h2>
-        <div className="flex items-center justify-center gap-1.5 text-primary-foreground/80 text-sm mt-1">
-          <MapPin className="w-3.5 h-3.5" />
-          {mockUser.location}
-        </div>
-        <div className="flex items-center justify-center gap-1.5 text-primary-foreground/60 text-xs mt-1">
-          <Calendar className="w-3 h-3" />
-          Miembro desde {mockUser.joinDate}
-        </div>
+    <div className="flex flex-col h-full overflow-y-auto bg-background pb-24">
+      {/* Header */}
+      <div className="border-b border-border/60 bg-[linear-gradient(160deg,hsl(var(--primary)/0.07)_0%,transparent_60%)] px-4 pt-6 pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease }}
+          className="rounded-[28px] border border-border/60 bg-card p-5 shadow-[0_12px_36px_-16px_hsl(var(--primary)/0.35)]"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18, delay: 0.1 }}
+              >
+                <InitialAvatar
+                  initials={mockUser.initials}
+                  className="h-16 w-16 rounded-[18px] bg-primary text-primary-foreground"
+                  textClassName="text-lg tracking-[0.18em]"
+                />
+              </motion.div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary/60">Perfil</p>
+                <h2 className="mt-0.5 text-2xl font-extrabold tracking-tight text-foreground">{mockUser.name}</h2>
+                <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  <span>{mockUser.location}</span>
+                </div>
+                <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                  <span>Desde {mockUser.joinDate}</span>
+                </div>
+              </div>
+            </div>
 
-        {/* Points banner */}
-        <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent rounded-full shadow-lg">
-          <span className="text-lg">⭐</span>
-          <span className="text-lg font-black text-accent-foreground">{mockUser.points.toLocaleString()}</span>
-          <span className="text-sm font-semibold text-accent-foreground/80">puntos</span>
-        </div>
+            <div className="rounded-[18px] border border-accent/25 bg-accent/10 px-4 py-3 text-right">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent-foreground/70">Puntos</p>
+              <div className="mt-1 flex items-center justify-end gap-1.5 text-accent-foreground">
+                <Award className="h-4 w-4" />
+                <span className="text-xl font-extrabold">{mockUser.points.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      <div className="px-4 -mt-4 space-y-5">
+      <div className="space-y-6 px-4 py-5">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { value: mockUser.stats.returns, label: 'Devoluciones', icon: '🤝' },
-            { value: mockUser.stats.recoveries, label: 'Recuperaciones', icon: '📦' },
-            { value: mockUser.stats.rating, label: 'Rating', icon: '⭐' },
-          ].map((stat) => (
-            <Card key={stat.label} className="p-3 text-center bg-card border-border/60">
-              <span className="text-2xl">{stat.icon}</span>
-              <p className="text-xl font-black text-foreground mt-1">{stat.value}</p>
-              <p className="text-[10px] font-semibold text-muted-foreground">{stat.label}</p>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease }}
+          className="grid grid-cols-3 gap-3"
+        >
+          {stats.map(({ value, label, Icon, color }) => (
+            <Card key={label} className="rounded-[20px] border-border/60 bg-card p-4 text-center shadow-sm">
+              <div className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl ${color}`}>
+                <Icon className="h-4 w-4" />
+              </div>
+              <p className="mt-3 text-xl font-extrabold tracking-tight text-foreground">{value}</p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
             </Card>
           ))}
-        </div>
+        </motion.div>
 
         {/* Badges */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="w-5 h-5 text-accent" />
-            <h3 className="font-black text-foreground">Insignias</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.18, ease }}
+          className="space-y-3"
+        >
+          <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
+            <Trophy className="h-4 w-4 text-primary" />
+            Insignias
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
             {mockUser.badges.map((badge) => (
               <Card
                 key={badge.label}
-                className={`p-3 text-center transition-all ${
-                  badge.unlocked ? 'bg-card border-border/60' : 'bg-muted/50 border-border/30 opacity-50'
+                className={`rounded-[20px] border p-4 transition-all ${
+                  badge.unlocked
+                    ? "border-primary/20 bg-card shadow-sm"
+                    : "border-border/40 bg-muted/25"
                 }`}
               >
-                <span className="text-2xl block">{badge.icon}</span>
-                <p className="text-[10px] font-bold text-foreground mt-1.5 leading-tight">{badge.label}</p>
-                {badge.unlocked && (
-                  <Badge className="mt-1 text-[8px] bg-success/15 text-success border-success/30 px-1.5">
-                    ✓ Logrado
-                  </Badge>
-                )}
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-[14px] ${
+                      badge.unlocked ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {(() => {
+                      const Icon = badgeIcons[badge.iconKey];
+                      return <Icon className="h-4 w-4" />;
+                    })()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold leading-tight text-foreground">{badge.label}</p>
+                    <Badge
+                      className={`mt-2 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        badge.unlocked
+                          ? "border-success/20 bg-success/10 text-success"
+                          : "border-border/50 bg-background text-muted-foreground"
+                      }`}
+                    >
+                      {badge.unlocked ? "Disponible" : "En progreso"}
+                    </Badge>
+                  </div>
+                </div>
               </Card>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Rewards */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Gift className="w-5 h-5 text-accent" />
-            <h3 className="font-black text-foreground">Recompensas Canjeables</h3>
-          </div>
-          <div className="space-y-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.26, ease }}
+          className="space-y-3"
+        >
+          <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
+            <Gift className="h-4 w-4 text-primary" />
+            Recompensas Canjeables
+          </h3>
+          <div className="space-y-2.5">
             {mockRewards.map((reward) => (
-              <Card key={reward.id} className="p-3 flex items-center gap-3 border-border/60">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-2xl flex-shrink-0">
-                  {reward.icon}
+              <Card key={reward.id} className="rounded-[20px] border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <div className="flex items-center gap-3">
+                  <RewardBrandLogo iconKey={reward.iconKey} className="flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-foreground">{reward.title}</p>
+                    <p className="text-xs text-muted-foreground">{reward.description}</p>
+                  </div>
+                  <motion.div whileTap={{ scale: 0.94 }}>
+                    <Button
+                      size="sm"
+                      variant={mockUser.points >= reward.pointsCost ? "default" : "secondary"}
+                      className="h-9 rounded-xl px-3 text-xs font-bold shadow-md shadow-primary/20 transition-all hover:shadow-lg active:scale-95"
+                      disabled={mockUser.points < reward.pointsCost}
+                    >
+                      {reward.pointsCost} pts
+                    </Button>
+                  </motion.div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm text-foreground">{reward.title}</p>
-                  <p className="text-xs text-muted-foreground">{reward.description}</p>
-                </div>
-                <Button
-                  size="sm"
-                  variant={mockUser.points >= reward.pointsCost ? "default" : "secondary"}
-                  className="rounded-lg text-xs font-bold flex-shrink-0 active:scale-95 transition-transform"
-                  disabled={mockUser.points < reward.pointsCost}
-                >
-                  {reward.pointsCost} pts
-                </Button>
               </Card>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

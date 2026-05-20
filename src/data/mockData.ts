@@ -1,4 +1,16 @@
 export type ItemStatus = 'unclaimed' | 'claimed';
+export type RewardIconKey = "delivery" | "health" | "coffee" | "cinema" | "retail";
+export type BadgeIconKey = "firstReturn" | "streak" | "trusted" | "tenReturns" | "community" | "legend";
+
+export interface RankingEntry {
+  rank: number;
+  name: string;
+  initials: string;
+  returns: number;
+  rating: number;
+  points: number;
+  isCurrentUser?: boolean;
+}
 
 export interface FoundItem {
   id: string;
@@ -11,7 +23,7 @@ export interface FoundItem {
   imageUrl: string;
   finder: {
     name: string;
-    avatar: string;
+    initials: string;
     rating: number;
   };
   claims: number;
@@ -22,7 +34,7 @@ export interface FoundItem {
 export interface UserProfile {
   name: string;
   email: string;
-  avatar: string;
+  initials: string;
   location: string;
   joinDate: string;
   points: number;
@@ -31,7 +43,7 @@ export interface UserProfile {
     recoveries: number;
     rating: number;
   };
-  badges: { icon: string; label: string; unlocked: boolean }[];
+  badges: { iconKey: BadgeIconKey; label: string; unlocked: boolean }[];
 }
 
 export interface Reward {
@@ -39,7 +51,7 @@ export interface Reward {
   title: string;
   description: string;
   pointsCost: number;
-  icon: string;
+  iconKey: RewardIconKey;
 }
 
 export const CATEGORIES = ['Todos', 'Documentos', 'Electrónica', 'Llaves', 'Ropa', 'Mascotas', 'Otros'];
@@ -47,113 +59,126 @@ export const CATEGORIES = ['Todos', 'Documentos', 'Electrónica', 'Llaves', 'Rop
 export const mockItems: FoundItem[] = [
   {
     id: '1',
-    title: 'Llavero con 3 llaves y llavero de Pucca',
+    title: 'Llavero metálico con tres llaves',
     category: 'Llaves',
-    description: 'Encontrado en la entrada del centro comercial Sambil. Tiene un llavero de Pucca rojo.',
-    location: 'C.C. Sambil, Caracas',
+    description: 'Encontrado junto a una banca frente a la Alcaldía. Tiene una cinta negra corta y una llave de seguridad.',
+    location: 'Plaza de Nariño, Pasto',
     date: '2026-03-23',
     timeAgo: 'Hace 1 hora',
     imageUrl: '',
-    finder: { name: 'María G.', avatar: '👩‍🦱', rating: 4.8 },
+    finder: { name: 'Laura M.', initials: 'LM', rating: 4.8 },
     claims: 0,
     status: 'unclaimed',
     securityQuestions: [
       { question: '¿Cuántas llaves tiene el llavero?', answer: '3' },
-      { question: '¿De qué personaje es el llavero?', answer: 'Pucca' },
+      { question: '¿De qué color es la cinta del llavero?', answer: 'negra' },
     ],
   },
   {
     id: '2',
-    title: 'iPhone 14 Pro con forro azul',
+    title: 'Celular Samsung Galaxy con funda azul',
     category: 'Electrónica',
-    description: 'Encontrado en un asiento del metro de Plaza Venezuela. Pantalla con protector.',
-    location: 'Metro Plaza Venezuela',
+    description: 'Encontrado en la sala de espera del segundo piso. Tiene protector de pantalla y fondo oscuro.',
+    location: 'Terminal de Transportes de Pasto',
     date: '2026-03-23',
     timeAgo: 'Hace 3 horas',
     imageUrl: '',
-    finder: { name: 'Carlos R.', avatar: '👨‍💼', rating: 4.5 },
+    finder: { name: 'Santiago P.', initials: 'SP', rating: 4.6 },
     claims: 2,
     status: 'claimed',
     securityQuestions: [
-      { question: '¿De qué color es el forro?', answer: 'azul' },
+      { question: '¿De qué color es la funda?', answer: 'azul' },
       { question: '¿Tiene protector de pantalla?', answer: 'sí' },
     ],
   },
   {
     id: '3',
-    title: 'Cédula de identidad venezolana',
+    title: 'Cédula de ciudadanía',
     category: 'Documentos',
-    description: 'Encontrada en la acera frente a Farmatodo de Las Mercedes.',
-    location: 'Las Mercedes, Caracas',
+    description: 'Encontrada cerca del bloque administrativo, dentro de una funda plástica transparente.',
+    location: 'Universidad de Nariño, Torobajo',
     date: '2026-03-22',
     timeAgo: 'Hace 1 día',
     imageUrl: '',
-    finder: { name: 'Ana P.', avatar: '👩‍🎓', rating: 5.0 },
+    finder: { name: 'Ana C.', initials: 'AC', rating: 5.0 },
     claims: 1,
     status: 'claimed',
     securityQuestions: [
       { question: '¿Cuáles son los últimos 4 dígitos?', answer: '4821' },
-      { question: '¿Nombre que aparece en la cédula?', answer: '' },
+      { question: '¿En qué estaba guardado el documento?', answer: 'funda plástica' },
     ],
   },
   {
     id: '4',
     title: 'Mochila negra marca Totto',
     category: 'Otros',
-    description: 'Dejada en la banca del parque del Este. Contiene cuadernos.',
-    location: 'Parque del Este, Caracas',
+    description: 'Hallada cerca de la zona de comidas. Contiene un cuaderno cuadriculado y un estuche azul.',
+    location: 'Unicentro Pasto',
     date: '2026-03-22',
     timeAgo: 'Hace 5 horas',
     imageUrl: '',
-    finder: { name: 'Luis M.', avatar: '🧑‍🔧', rating: 4.2 },
+    finder: { name: 'Juliana R.', initials: 'JR', rating: 4.4 },
     claims: 0,
     status: 'unclaimed',
     securityQuestions: [
       { question: '¿Qué marca es la mochila?', answer: 'Totto' },
-      { question: '¿Qué contiene adentro?', answer: 'cuadernos' },
+      { question: '¿Qué color tiene el estuche?', answer: 'azul' },
     ],
   },
   {
     id: '5',
-    title: 'Audífonos AirPods Pro blancos',
+    title: 'Audífonos inalámbricos blancos',
     category: 'Electrónica',
-    description: 'Encontrados en el food court del CCCT. Estuche con una calcomanía de gato.',
-    location: 'CCCT, Caracas',
+    description: 'Encontrados en una mesa junto a una cafetería. El estuche tiene una marca leve en la tapa.',
+    location: 'Centro histórico de Pasto',
     date: '2026-03-21',
     timeAgo: 'Hace 2 días',
     imageUrl: '',
-    finder: { name: 'Sofía V.', avatar: '👩‍🎤', rating: 4.9 },
+    finder: { name: 'Mateo E.', initials: 'ME', rating: 4.9 },
     claims: 3,
     status: 'claimed',
     securityQuestions: [
-      { question: '¿Qué calcomanía tiene el estuche?', answer: 'gato' },
-      { question: '¿Son AirPods de qué generación?', answer: 'Pro' },
+      { question: '¿De qué color son los audífonos?', answer: 'blancos' },
+      { question: '¿El estuche tiene alguna marca visible?', answer: 'sí' },
     ],
   },
 ];
 
 export const mockUser: UserProfile = {
-  name: 'Alejandro Torres',
-  email: 'alejandro@email.com',
-  avatar: '🧑‍💻',
-  location: 'Caracas, Venezuela',
-  joinDate: 'Enero 2026',
+  name: 'Valentina Rosero',
+  email: 'valentina.rosero@email.com',
+  initials: 'VR',
+  location: 'Pasto, Colombia',
+  joinDate: 'Febrero 2026',
   points: 1250,
   stats: { returns: 12, recoveries: 3, rating: 4.9 },
   badges: [
-    { icon: '🏅', label: 'Primera Devolución', unlocked: true },
-    { icon: '🔥', label: 'Racha de 3', unlocked: true },
-    { icon: '⭐', label: 'Rating Perfecto', unlocked: true },
-    { icon: '🎯', label: '10 Devoluciones', unlocked: true },
-    { icon: '🦸', label: 'Superhéroe', unlocked: false },
-    { icon: '💎', label: 'Leyenda', unlocked: false },
+    { iconKey: 'firstReturn', label: 'Primera devolución', unlocked: true },
+    { iconKey: 'streak', label: 'Racha de 3', unlocked: true },
+    { iconKey: 'trusted', label: 'Confianza alta', unlocked: true },
+    { iconKey: 'tenReturns', label: '10 devoluciones', unlocked: true },
+    { iconKey: 'community', label: 'Comunidad activa', unlocked: false },
+    { iconKey: 'legend', label: 'Referente local', unlocked: false },
   ],
 };
 
+export const mockRanking: RankingEntry[] = [
+  { rank: 1, name: 'Ana C.', initials: 'AC', returns: 34, rating: 5.0, points: 4200 },
+  { rank: 2, name: 'Mateo E.', initials: 'ME', returns: 28, rating: 4.9, points: 3650 },
+  { rank: 3, name: 'Laura M.', initials: 'LM', returns: 22, rating: 4.8, points: 2900 },
+  { rank: 4, name: 'Valentina Rosero', initials: 'VR', returns: 12, rating: 4.9, points: 1250, isCurrentUser: true },
+  { rank: 5, name: 'Santiago P.', initials: 'SP', returns: 10, rating: 4.6, points: 1100 },
+  { rank: 6, name: 'Juliana R.', initials: 'JR', returns: 8, rating: 4.4, points: 890 },
+  { rank: 7, name: 'Carlos F.', initials: 'CF', returns: 7, rating: 4.7, points: 780 },
+  { rank: 8, name: 'Daniela T.', initials: 'DT', returns: 5, rating: 4.5, points: 560 },
+  { rank: 9, name: 'Miguel O.', initials: 'MO', returns: 4, rating: 4.3, points: 430 },
+  { rank: 10, name: 'Paola V.', initials: 'PV', returns: 3, rating: 4.2, points: 310 },
+];
+
 export const mockRewards: Reward[] = [
-  { id: '1', title: '10% dcto Farmatodo', description: 'Válido en cualquier sucursal', pointsCost: 200, icon: '💊' },
-  { id: '2', title: 'Combo Hamburguesa', description: 'Burger Joint - combo sencillo', pointsCost: 500, icon: '🍔' },
-  { id: '3', title: 'Café gratis', description: 'Juan Valdez - cualquier bebida', pointsCost: 150, icon: '☕' },
-  { id: '4', title: 'Entrada de cine', description: 'Cinex - cualquier función', pointsCost: 800, icon: '🎬' },
-  { id: '5', title: '15% dcto Uber', description: 'Válido en próximo viaje', pointsCost: 300, icon: '🚗' },
+  { id: '1', title: 'Crédito para domicilio', description: 'Úsalo en tu próximo pedido registrado en la app.', pointsCost: 250, iconKey: 'delivery' },
+  { id: '2', title: 'Descuento en cuidado personal', description: 'Aplica a productos seleccionados en caja.', pointsCost: 220, iconKey: 'health' },
+  { id: '3', title: 'Bebida mediana', description: 'Disponible en tienda participante durante la vigencia.', pointsCost: 180, iconKey: 'coffee' },
+  { id: '4', title: 'Entrada general 2D', description: 'Válida de lunes a jueves según cartelera.', pointsCost: 800, iconKey: 'cinema' },
+  { id: '5', title: 'Descuento para compras', description: 'Redímelo en tienda física o canal web habilitado.', pointsCost: 360, iconKey: 'retail' },
 ];

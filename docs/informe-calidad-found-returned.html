@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informe de Calidad del Software - </title>
+  <style>
+    :root {
+      --ink: #1a3c6e;
+      --accent: #2e75b6;
+      --text: #222222;
+      --muted: #555555;
+      --border: #b8c7db;
+      --soft: #f5f8fc;
+      --callout-info-bg: #e8f0fe;
+      --callout-info-border: #2e75b6;
+      --callout-warning-bg: #fff3e0;
+      --callout-warning-border: #e36c09;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--text);
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 11pt;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 21cm;
+      margin: 0 auto;
+      background: white;
+      padding: 2cm;
+    }
+
+    .cover {
+      min-height: 24cm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0;
+    }
+
+    .cover-logo {
+      min-height: 64px;
+      width: 100%;
+    }
+
+    .cover-line {
+      width: min(72%, 12cm);
+      border-top: 2px solid var(--accent);
+      margin: 10px auto 18px;
+    }
+
+    .cover-title {
+      margin: 0;
+      font-family: Cambria, Georgia, serif;
+      font-size: 24pt;
+      line-height: 1.35;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .cover-subtitle {
+      margin: 0;
+      font-family: Cambria, Georgia, serif;
+      font-size: 16pt;
+      color: var(--accent);
+    }
+
+    .cover-subtitle.muted {
+      margin-top: 10px;
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 12pt;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .cover-info {
+      margin-top: 34px;
+      color: var(--text);
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 11pt;
+      line-height: 2.1;
+    }
+
+    .cover-info strong {
+      color: var(--ink);
+    }
+
+    .cover-footer {
+      width: 100%;
+      margin-top: 48px;
+    }
+
+    .toc-title,
+    section h2 {
+      margin: 0 0 14px;
+      color: var(--ink);
+      font-family: Cambria, Georgia, serif;
+      font-size: 18pt;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+    }
+
+    .report-title {
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-family: Cambria, Georgia, serif;
+      font-size: 18pt;
+      font-weight: 700;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .doc-rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0 18px;
+    }
+
+    .meta-lines {
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 10.5pt;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .meta-lines strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .executive-summary {
+      display: block;
+      margin: 15px 0;
+      padding: 12px;
+      font-size: 11pt;
+      background: var(--callout-info-bg);
+      border-left: 5px solid var(--callout-info-border);
+    }
+
+    .metrics-bar {
+      margin: 0 0 18px;
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 10.5pt;
+      font-weight: 700;
+      background: var(--ink);
+      color: white;
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+
+    .toc {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-family: Calibri, "Segoe UI", sans-serif;
+    }
+
+    .toc a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 11pt;
+    }
+
+    .toc a:hover {
+      text-decoration: underline;
+    }
+
+    .toc .toc-h2 {
+      padding-left: 18px;
+      color: var(--accent);
+    }
+
+    section,
+    .toc-section {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    section h3 {
+      margin: 18px 0 8px;
+      color: var(--accent);
+      font-family: Cambria, Georgia, serif;
+      font-size: 14pt;
+      font-weight: 700;
+    }
+
+    p,
+    li {
+      font-size: 11pt;
+      margin: 0 0 10px;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 10px 24px;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 12px;
+      font-family: Calibri, "Segoe UI", sans-serif;
+      font-size: 10pt;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 5px 6px;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--ink);
+      color: white;
+      text-align: center;
+    }
+
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9.5pt;
+      background: var(--soft);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .note {
+      font-size: 10.8pt;
+      color: var(--text);
+      background: var(--callout-info-bg);
+      border-left: 5px solid var(--callout-info-border);
+      padding: 10px 12px;
+      margin: 15px 0;
+    }
+
+    .warning {
+      border-left-color: var(--callout-warning-border);
+      background: var(--callout-warning-bg);
+      color: #6b4f1d;
+    }
+
+    .rating-cell {
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .rating-chip {
+      display: inline-block;
+      min-width: 92px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 9.5pt;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .rating-chip.high {
+      background: #e8f5e9;
+      border-color: #9fd3aa;
+      color: #1f6b2c;
+    }
+
+    .rating-chip.medium {
+      background: #fff4db;
+      border-color: #f0ca7a;
+      color: #8a5a00;
+    }
+
+    .rating-chip.low {
+      background: #fde8e8;
+      border-color: #e6a8a8;
+      color: #b42318;
+    }
+
+    .success-list li {
+      margin-bottom: 6px;
+    }
+
+    @page {
+      size: letter;
+      margin: 2cm;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+      }
+
+      .cover {
+        min-height: 24cm;
+      }
+
+      section,
+      .toc-section {
+        break-before: page;
+        page-break-before: always;
+      }
+
+      button,
+      input,
+      select,
+      textarea,
+      .interactive,
+      .no-print,
+      nav,
+      a.action {
+        display: none !important;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="cover">
+      <div class="cover-logo"></div>
+      <div class="cover-line"></div>
+      <div class="cover-title">Análisis de Calidad del Software<br />Aplicación web de objetos perdidos y encontrados</div>
+      <div class="cover-subtitle">No me la ratiai</div>
+      <div class="cover-line"></div>
+      <div class="cover-subtitle muted">Informe de evaluación técnica y académica<br />Basado en ISO/IEC 25010</div>
+      <div class="cover-info">
+        <strong>Proyecto:</strong> No me la ratiai<br />
+        <strong>Materia:</strong> Calidad de Software<br />
+        <strong>Institución:</strong> Universidad Cooperativa de Colombia<br />
+        <strong>Fecha:</strong> 25 de marzo de 2026
+      </div>
+      <div class="cover-footer">
+        <div class="cover-line"></div>
+      </div>
+    </header>
+
+    <section class="toc-section">
+      <h2 class="toc-title">Tabla de Contenidos</h2>
+      <div class="toc">
+        <a class="toc-h1" href="#introduccion">1. Introducción</a>
+        <a class="toc-h1" href="#descripcion">2. Descripción de la Aplicación</a>
+        <a class="toc-h1" href="#metodologia">3. Metodología de Evaluación</a>
+        <a class="toc-h1" href="#reporte">4. Reporte Actual y Evidencia Técnica</a>
+        <a class="toc-h1" href="#iso25010">5. Análisis con ISO/IEC 25010</a>
+        <a class="toc-h2" href="#resumen-iso">5.1. Resumen por característica</a>
+        <a class="toc-h2" href="#analisis-principal">5.2. Características con mayor evidencia</a>
+        <a class="toc-h2" href="#fallas-iso">5.3. Fallas del sistema según ISO/IEC 25010</a>
+        <a class="toc-h1" href="#limitaciones">6. Limitaciones del Prototipo</a>
+        <a class="toc-h1" href="#mejoras">7. Oportunidades de Mejora</a>
+        <a class="toc-h1" href="#conclusiones">8. Conclusiones</a>
+      </div>
+    </section>
+
+    <section id="introduccion">
+      <h2 class="report-title">Análisis de Calidad del Software</h2>
+      <hr class="doc-rule" />
+      <div class="meta-lines">
+        <div><strong>Proyecto:</strong> No me la ratiai</div>
+        <div><strong>Tipo:</strong> Prototipo frontend con datos mock</div>
+        <div><strong>Materia:</strong> Calidad de Software</div>
+        <div><strong>Fecha del informe:</strong> 25 de marzo de 2026</div>
+      </div>
+      <p class="executive-summary">Resumen ejecutivo: este informe analiza la calidad de la aplicación No me la ratiai como prototipo web académico orientado al reporte y recuperación de objetos perdidos. La evaluación se apoya en evidencia funcional, documentación QA, pruebas automatizadas y un mapeo explícito contra ISO/IEC 25010.</p>
+      <div class="metrics-bar">Estado verificado: 5/5 pruebas OK | lint: 0 errores, 7 warnings | build: exitoso</div>
+      <h2>1. Introducción</h2>
+      <p>Esta es una aplicación web diseñada para registrar objetos encontrados, facilitar reclamos y mostrar un perfil con incentivos para la devolución responsable. En esta versión académica, la app fue ajustada para una exposición centrada en calidad de software, con localización visible a Pasto, Colombia, simplificación visual y evidencia básica de aseguramiento de calidad.</p>
+      <p>El objetivo de este documento es presentar un análisis técnico y académico del estado actual de la aplicación, relacionando las características observables del sistema con la norma ISO/IEC 25010. El informe no pretende demostrar que la app sea un producto listo para producción, sino evidenciar cómo un prototipo frontend puede analizarse críticamente desde la perspectiva de calidad.</p>
+      <div class="note">Al tratarse de un prototipo sin backend real, parte del análisis se apoya en evidencia directa del frontend, pruebas de interfaz, estructura del código y limitaciones explícitas del sistema.</div>
+    </section>
+
+    <section id="descripcion">
+      <h2>2. Descripción de la Aplicación</h2>
+      <p>La aplicación modela un flujo simple de objetos perdidos y encontrados. El usuario puede iniciar sesión, revisar publicaciones, abrir el detalle de un hallazgo, responder preguntas de verificación para reclamarlo y publicar nuevos objetos encontrados. Además, puede consultar un perfil con puntos, insignias y recompensas canjeables.</p>
+      <h3>2.1. Flujos visibles en la app</h3>
+      <ul class="success-list">
+        <li><strong>Login:</strong> acceso inicial mediante botón de ingreso.</li>
+        <li><strong>Inicio:</strong> consulta de hallazgos con búsqueda y filtros por categoría.</li>
+        <li><strong>Publicar:</strong> formulario para registrar un objeto encontrado.</li>
+        <li><strong>Reclamar:</strong> validación con preguntas de seguridad del hallador.</li>
+        <li><strong>Perfil:</strong> visualización de ubicación, estadísticas, insignias y recompensas.</li>
+      </ul>
+      <h3>2.2. Contexto y localización</h3>
+      <p>Uno de los ajustes principales del proyecto fue la localización explícita a Pasto, Colombia. Esto se refleja en los datos mock visibles en la pantalla principal y en el perfil, incluyendo referencias como Plaza de Nariño, Universidad de Nariño, Terminal de Transportes de Pasto y recompensas asociadas a marcas reconocibles en Colombia como Rappi, Cruz Verde, Juan Valdez, Cine Colombia y Éxito.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th>Evidencia en la app</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ubicación del usuario</td>
+            <td>Pasto, Colombia</td>
+          </tr>
+          <tr>
+            <td>Referencias locales</td>
+            <td>Plaza de Nariño, Universidad de Nariño, Unicentro Pasto, Centro histórico</td>
+          </tr>
+          <tr>
+            <td>Recompensas</td>
+            <td>Rappi, Cruz Verde, Juan Valdez, Cine Colombia, Éxito</td>
+          </tr>
+          <tr>
+            <td>Estilo visual</td>
+            <td>Interfaz sobria, en español y sin emojis visibles</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="metodologia">
+      <h2>3. Metodología de Evaluación</h2>
+      <p>La evaluación de calidad se construyó a partir de varias fuentes complementarias. Primero, se revisó la estructura funcional de la app para identificar los flujos implementados. Segundo, se usó la matriz QA del proyecto como evidencia manual. Tercero, se verificó el estado técnico actual mediante pruebas automatizadas, lint y compilación.</p>
+      <h3>3.1. Fuentes de evidencia usadas</h3>
+      <ol>
+        <li><strong>Documentación del proyecto:</strong> README con descripción, comandos y relación inicial con ISO/IEC 25010.</li>
+        <li><strong>Matriz QA:</strong> casos de prueba manuales documentados para login, perfil, recompensas, publicar y reclamar.</li>
+        <li><strong>Pruebas automatizadas:</strong> suite en Vitest y React Testing Library.</li>
+        <li><strong>Verificación estática:</strong> ejecución de lint para detectar problemas de consistencia técnica.</li>
+        <li><strong>Verificación técnica:</strong> build de producción para validar compilación.</li>
+      </ol>
+      <h3>3.2. Criterio de lectura del informe</h3>
+      <p>El análisis se presenta con un enfoque balanceado y crítico. Cuando una característica de calidad tiene evidencia fuerte, se resalta. Cuando la evidencia es parcial por tratarse de un prototipo, se deja explícito como limitación. Esto evita sobrevalorar el sistema y mejora la validez académica del informe.</p>
+    </section>
+
+    <section id="reporte">
+      <h2>4. Reporte Actual y Evidencia Técnica</h2>
+      <p>La app cuenta con una combinación de evidencia manual y automatizada. Para efectos del análisis académico, esa evidencia se reorganizó como una batería de verificación basada en ISO/IEC 25010, de modo que cada prueba aporte directamente a una característica de calidad del modelo.</p>
+      <h3>4.1. Pruebas de evaluación ISO/IEC 25010 ejecutadas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Característica ISO 25010</th>
+            <th>Prueba o criterio aplicado</th>
+            <th>Evidencia actual</th>
+            <th>Resultado</th>
+            <th>Hallazgo o falla detectada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Adecuación funcional</td>
+            <td>Validar los flujos visibles principales: login, consulta de hallazgos, publicación, reclamo y perfil.</td>
+            <td><code>src/test/index-smoke.test.tsx</code>, matriz QA y revisión funcional de pantallas.</td>
+            <td class="rating-cell"><span class="rating-chip high">Cumple</span></td>
+            <td>Los flujos existen, pero no hay persistencia real ni validación backend de los datos.</td>
+          </tr>
+          <tr>
+            <td>Usabilidad</td>
+            <td>Comprobar claridad visual, etiquetas, idioma, localización y consistencia del contenido mostrado al usuario.</td>
+            <td><code>src/test/home-screen.test.tsx</code>, <code>src/test/profile-screen.test.tsx</code>, <code>src/test/publish-screen.test.tsx</code>.</td>
+            <td class="rating-cell"><span class="rating-chip high">Cumple</span></td>
+            <td>No existe evaluación formal de accesibilidad, contraste ni navegación completa por teclado.</td>
+          </tr>
+          <tr>
+            <td>Fiabilidad</td>
+            <td>Verificar estabilidad de navegación, disponibilidad de acciones principales y ausencia de regresiones visibles.</td>
+            <td><code>npm test</code>, smoke test y compilación del proyecto.</td>
+            <td class="rating-cell"><span class="rating-chip medium">Parcial</span></td>
+            <td>La app es estable como frontend, pero no hay tolerancia a fallos, recuperación de estado ni persistencia.</td>
+          </tr>
+          <tr>
+            <td>Seguridad</td>
+            <td>Revisar si el sistema protege acciones sensibles, identidad del usuario y datos del reclamo.</td>
+            <td>Inspección funcional del flujo de reclamo y login simulado.</td>
+            <td class="rating-cell"><span class="rating-chip low">Bajo</span></td>
+            <td>El login es simulado, no hay autenticación real, autorización, cifrado ni protección efectiva de datos.</td>
+          </tr>
+          <tr>
+            <td>Eficiencia de desempeño</td>
+            <td>Evaluar si la aplicación compila, carga y responde de forma liviana en su alcance actual.</td>
+            <td><code>npm run build</code> y observación del comportamiento del frontend.</td>
+            <td class="rating-cell"><span class="rating-chip medium">Parcial</span></td>
+            <td>No se ejecutaron métricas objetivas como Lighthouse, Web Vitals o profiling de rendimiento.</td>
+          </tr>
+          <tr>
+            <td>Compatibilidad</td>
+            <td>Comprobar adaptación básica a interfaz web responsive y ejecución en entorno estándar de navegador.</td>
+            <td>Revisión visual del prototipo y build exitosa.</td>
+            <td class="rating-cell"><span class="rating-chip medium">Parcial</span></td>
+            <td>No existen pruebas cross-browser ni validación sistemática en distintos dispositivos.</td>
+          </tr>
+          <tr>
+            <td>Mantenibilidad</td>
+            <td>Revisar modularidad del código, separaciones internas y facilidad de modificación con apoyo de pruebas.</td>
+            <td>Estructura por componentes, datos mock, utilidades, tests y <code>npm run lint</code>.</td>
+            <td class="rating-cell"><span class="rating-chip high">Cumple</span></td>
+            <td>Persisten 7 warnings de lint que muestran oportunidades de mejora en componentes reutilizables.</td>
+          </tr>
+          <tr>
+            <td>Portabilidad</td>
+            <td>Comprobar si el proyecto puede instalarse, ejecutarse y compilarse con herramientas estándar.</td>
+            <td>README, Vite, Node.js, npm y build exitosa.</td>
+            <td class="rating-cell"><span class="rating-chip high">Cumple</span></td>
+            <td>No se documenta validación en múltiples sistemas operativos, aunque el stack favorece portabilidad.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>4.2. Resultado técnico verificado</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Propósito</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>npm test</code></td>
+            <td>Validar comportamiento funcional y regresiones básicas del frontend.</td>
+            <td>5 archivos de prueba aprobados, 5 pruebas aprobadas.</td>
+          </tr>
+          <tr>
+            <td><code>npm run lint</code></td>
+            <td>Revisión estática del código.</td>
+            <td>0 errores, 7 advertencias de <code>react-refresh/only-export-components</code>.</td>
+          </tr>
+          <tr>
+            <td><code>npm run build</code></td>
+            <td>Confirmar compilación para producción.</td>
+            <td>Build exitosa.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note warning">Las advertencias de lint no bloquean la ejecución ni la compilación, pero sí indican oportunidades de mejora en la organización de algunos componentes reutilizables.</div>
+      <h3>4.3. Evidencia manual documentada</h3>
+      <p>La matriz QA registrada para el proyecto cubre diez casos: login, perfil localizado, recompensas colombianas, ausencia de referencias venezolanas, ausencia de emojis, flujo de publicar, flujo de reclamar, navegación al perfil, lint y build. En este informe, dicha matriz se interpreta como evidencia de apoyo para las características de adecuación funcional, usabilidad y fiabilidad definidas por ISO/IEC 25010.</p>
+    </section>
+
+    <section id="iso25010">
+      <h2>5. Análisis con ISO/IEC 25010</h2>
+      <p>ISO/IEC 25010 define un modelo de calidad con ocho características principales. En este proyecto, varias pueden demostrarse de forma directa a partir de la interfaz, la estructura del código y la evidencia QA; otras solo pueden evaluarse parcialmente debido a que la aplicación no implementa backend, base de datos ni autenticación real.</p>
+      <h3 id="resumen-iso">5.1. Resumen por característica</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>Valoración</th>
+            <th>Evidencia o comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Adecuación funcional</td>
+            <td class="rating-cell"><span class="rating-chip high">Alta</span></td>
+            <td>La app cubre los flujos esperados del caso académico: login, consulta, publicación, reclamo y perfil.</td>
+          </tr>
+          <tr>
+            <td>Eficiencia de desempeño</td>
+            <td class="rating-cell"><span class="rating-chip medium">Media</span></td>
+            <td>La interfaz es ligera y compila correctamente, pero no hay métricas de rendimiento formales.</td>
+          </tr>
+          <tr>
+            <td>Compatibilidad</td>
+            <td class="rating-cell"><span class="rating-chip medium">Media</span></td>
+            <td>Es una app web responsive para navegador; no se reportan pruebas cruzadas extensas de plataformas.</td>
+          </tr>
+          <tr>
+            <td>Usabilidad</td>
+            <td class="rating-cell"><span class="rating-chip high">Alta</span></td>
+            <td>Interfaz clara en español, navegación coherente, identidad local y reducción de ruido visual.</td>
+          </tr>
+          <tr>
+            <td>Fiabilidad</td>
+            <td class="rating-cell"><span class="rating-chip medium">Media-Alta</span></td>
+            <td>Las pruebas automatizadas y el smoke test reducen regresiones en flujos clave.</td>
+          </tr>
+          <tr>
+            <td>Seguridad</td>
+            <td class="rating-cell"><span class="rating-chip low">Baja-Media</span></td>
+            <td>Existe verificación por preguntas en reclamo, pero no hay autenticación ni protección real de datos.</td>
+          </tr>
+          <tr>
+            <td>Mantenibilidad</td>
+            <td class="rating-cell"><span class="rating-chip high">Alta</span></td>
+            <td>Separación en componentes, datos mock, utilidades y suite de pruebas independiente.</td>
+          </tr>
+          <tr>
+            <td>Portabilidad</td>
+            <td class="rating-cell"><span class="rating-chip high">Alta</span></td>
+            <td>Puede ejecutarse con Node.js y npm mediante comandos estándar de Vite.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="analisis-principal">5.2. Características con mayor evidencia</h3>
+      <h3>5.2.1. Adecuación funcional</h3>
+      <p>La adecuación funcional se evidencia en que los objetivos del prototipo están representados en flujos concretos: iniciar sesión, revisar objetos encontrados, registrar nuevos hallazgos, iniciar un reclamo y consultar un perfil con incentivos. Para una materia de calidad, esto demuestra que el producto implementa funciones alineadas con su propósito académico.</p>
+      <p>Adicionalmente, la localización a Pasto no es solo estética; también fortalece la pertinencia del contenido porque hace que el prototipo se sienta contextualizado al entorno del usuario final planteado.</p>
+      <h3>5.2.2. Usabilidad</h3>
+      <p>La usabilidad es una de las fortalezas principales del proyecto. La app trabaja completamente en español, usa etiquetas visibles, botones claros y una navegación inferior consistente. La eliminación de emojis visibles reduce ruido visual y hace que la experiencia se perciba más sobria y académicamente más cuidada.</p>
+      <p>El rediseño del perfil, las insignias y las recompensas con marcas reconocibles mejora la comprensión visual del sistema y la coherencia del contexto colombiano. Aunque no hay una evaluación formal de accesibilidad, sí existe un esfuerzo claro por jerarquía visual y consistencia.</p>
+      <h3>5.2.3. Fiabilidad</h3>
+      <p>En un prototipo frontend, la fiabilidad se observa sobre todo en la estabilidad de los flujos más sensibles. Aquí esa evidencia existe por medio de una suite automatizada que valida inicio, perfil, publicación, reclamo y navegación básica. También existe una matriz QA manual que amplía el control funcional.</p>
+      <p>La app compila correctamente y las pruebas ejecutadas hoy pasaron por completo. Esto no garantiza confiabilidad productiva a gran escala, pero sí demuestra control sobre regresiones en el alcance actual del proyecto.</p>
+      <h3>5.2.4. Mantenibilidad</h3>
+      <p>La mantenibilidad está bien representada por la organización del código. La aplicación separa pantallas, navegación, datos mock, componentes auxiliares y pruebas. Esta distribución facilita entender el comportamiento del sistema sin necesidad de recorrer un único archivo monolítico.</p>
+      <p>Además, el uso de pruebas específicas por pantalla ayuda a sostener cambios futuros. Las advertencias de lint muestran que todavía hay espacio para mejorar ciertos archivos reutilizables, pero no invalidan la base estructural actual.</p>
+      <h3>5.2.5. Características con evidencia parcial</h3>
+      <p><strong>Eficiencia de desempeño:</strong> la app es liviana y el build es exitoso, pero no existen mediciones como Lighthouse, Web Vitals o profiling real.</p>
+      <p><strong>Compatibilidad:</strong> al ser una web app construida con Vite y React, es razonable afirmar compatibilidad básica con navegadores modernos, aunque no hay pruebas cruzadas documentadas.</p>
+      <p><strong>Seguridad:</strong> el flujo de reclamo usa preguntas de validación, pero esto no reemplaza autenticación, autorización, cifrado ni protección real de datos personales.</p>
+      <p><strong>Portabilidad:</strong> el proyecto es portable en entornos comunes de desarrollo porque solo requiere Node.js, npm y un navegador.</p>
+      <h3 id="fallas-iso">5.3. Fallas del sistema según ISO/IEC 25010</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Falla detectada</th>
+            <th>Característica afectada</th>
+            <th>Impacto en calidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>F-01</td>
+            <td>Login simulado sin autenticación real.</td>
+            <td>Seguridad</td>
+            <td>El sistema no garantiza identidad del usuario ni control de acceso sobre acciones sensibles.</td>
+          </tr>
+          <tr>
+            <td>F-02</td>
+            <td>Reclamos y publicaciones sin persistencia real de datos.</td>
+            <td>Fiabilidad / Adecuación funcional</td>
+            <td>El flujo funciona en interfaz, pero no asegura continuidad, trazabilidad ni consistencia de información.</td>
+          </tr>
+          <tr>
+            <td>F-03</td>
+            <td>Ausencia de métricas objetivas de rendimiento.</td>
+            <td>Eficiencia de desempeño</td>
+            <td>No se puede demostrar con evidencia cuantitativa el tiempo de carga, respuesta o consumo de recursos.</td>
+          </tr>
+          <tr>
+            <td>F-04</td>
+            <td>Sin validación formal de accesibilidad ni de navegación asistida.</td>
+            <td>Usabilidad</td>
+            <td>La interfaz es clara visualmente, pero no hay garantía de uso adecuado para todos los perfiles de usuario.</td>
+          </tr>
+          <tr>
+            <td>F-05</td>
+            <td>No hay pruebas cruzadas entre navegadores y dispositivos.</td>
+            <td>Compatibilidad</td>
+            <td>La app puede comportarse de forma distinta fuera del entorno donde fue demostrada.</td>
+          </tr>
+          <tr>
+            <td>F-06</td>
+            <td>Existen advertencias de lint en componentes reutilizables.</td>
+            <td>Mantenibilidad</td>
+            <td>Aunque no bloquean la ejecución, señalan áreas del código que conviene fortalecer para cambios futuros.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">En términos académicos, estas fallas no invalidan el proyecto, pero sí delimitan con claridad qué características de ISO/IEC 25010 están realmente soportadas y cuáles solo tienen evidencia parcial.</div>
+    </section>
+
+    <section id="limitaciones">
+      <h2>6. Limitaciones del Prototipo</h2>
+      <p>El valor académico del proyecto depende de reconocer con claridad sus límites. No debe presentarse como un sistema productivo listo para despliegue institucional, sino como un prototipo frontend enfocado en experiencia de usuario, localización y evidencia QA básica.</p>
+      <ul>
+        <li>No existe backend real ni persistencia de datos.</li>
+        <li>El login es simulado y no maneja autenticación real.</li>
+        <li>Las preguntas de seguridad del reclamo son demostrativas, no un mecanismo robusto de protección.</li>
+        <li>No hay mediciones formales de rendimiento, accesibilidad o compatibilidad cross-browser.</li>
+        <li>Las recompensas, hallazgos y estados del sistema provienen de datos mock.</li>
+      </ul>
+      <div class="note">Reconocer estas limitaciones fortalece el informe, porque demuestra criterio de ingeniería y evita afirmar capacidades que el sistema no implementa.</div>
+    </section>
+
+    <section id="mejoras">
+      <h2>7. Oportunidades de Mejora</h2>
+      <p>A partir del estado actual, se pueden proponer mejoras concretas que aumentarían la calidad del sistema y ampliarían la cobertura real de ISO/IEC 25010.</p>
+      <ol>
+        <li>Incorporar backend y persistencia para gestionar hallazgos, reclamos y perfiles reales.</li>
+        <li>Implementar autenticación y autorización para proteger acciones sensibles.</li>
+        <li>Agregar pruebas end-to-end reales con Playwright o Cypress sobre el flujo completo.</li>
+        <li>Medir rendimiento con herramientas objetivas como Lighthouse o Web Vitals.</li>
+        <li>Realizar una revisión formal de accesibilidad y navegación asistida por teclado.</li>
+        <li>Reducir warnings de lint en componentes reutilizables para fortalecer mantenibilidad.</li>
+      </ol>
+    </section>
+
+    <section id="conclusiones">
+      <h2>8. Conclusiones</h2>
+      <p>Esta app presenta una base sólida como ejercicio académico de calidad de software. La app cumple de manera convincente con adecuación funcional, usabilidad, fiabilidad básica y mantenibilidad, que son precisamente las características de ISO/IEC 25010 con mejor evidencia en el contexto actual.</p>
+      <p>Al mismo tiempo, el proyecto muestra madurez al documentar pruebas, disponer de una matriz QA y aceptar que seguridad, rendimiento y compatibilidad todavía solo tienen evidencia parcial. Esta combinación de fortalezas verificables y límites explícitos hace que el informe sea defendible en un curso de calidad de software.</p>
+      <p>En síntesis, el proyecto no demuestra un producto terminado para producción, pero sí evidencia una aplicación académica bien estructurada, verificable y suficientemente analizable desde el marco de ISO/IEC 25010.</p>
+    </section>
+  </main>
+</body>
+</html>
