@@ -2,6 +2,12 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import PublishScreen from "@/components/PublishScreen";
 
+vi.mock("@/lib/api", () => ({
+  api: {
+    createItem: vi.fn().mockResolvedValue({ id: "new-1", title: "Billetera negra con documentos" }),
+  },
+}));
+
 describe("PublishScreen — validación de campos obligatorios", () => {
   it("no llama onPublish cuando todos los campos están vacíos", () => {
     const onPublish = vi.fn();
@@ -28,7 +34,7 @@ describe("PublishScreen — validación de campos obligatorios", () => {
     expect(screen.getByText("La ubicación es obligatoria")).toBeInTheDocument();
   });
 
-  it("llama onPublish cuando título, categoría y ubicación están completos", () => {
+  it("llama onPublish cuando título, categoría y ubicación están completos", async () => {
     const onPublish = vi.fn();
     render(<PublishScreen onBack={vi.fn()} onPublish={onPublish} />);
 
@@ -41,6 +47,7 @@ describe("PublishScreen — validación de campos obligatorios", () => {
     fireEvent.click(screen.getByRole("button", { name: "Documentos" }));
     fireEvent.click(screen.getByRole("button", { name: "Publicar Hallazgo" }));
 
+    await screen.findByRole("button", { name: "Publicar Hallazgo" }); // wait for async
     expect(onPublish).toHaveBeenCalledTimes(1);
   });
 });
