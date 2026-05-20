@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Handshake, Lock, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -14,6 +15,29 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      setError("Ingresa tu correo y contraseña");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await api.login(email.trim(), password);
+      onLogin();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleLogin();
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -68,6 +92,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
               placeholder="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="h-12 rounded-2xl border-border/60 bg-white pl-10 text-sm shadow-sm transition-shadow focus:shadow-[0_0_0_3px_hsl(var(--ring)/0.15)]"
             />
           </div>
@@ -79,6 +104,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="h-12 rounded-2xl border-border/60 bg-white pl-10 pr-11 text-sm shadow-sm transition-shadow focus:shadow-[0_0_0_3px_hsl(var(--ring)/0.15)]"
             />
             <button
@@ -90,6 +116,16 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
             </button>
           </div>
 
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+
           <div className="text-right">
             <button className="text-xs font-semibold text-primary/80 transition-colors hover:text-primary">
               ¿Olvidaste tu contraseña?
@@ -98,10 +134,11 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
 
           <motion.div whileTap={{ scale: 0.97 }}>
             <Button
-              onClick={onLogin}
-              className="h-12 w-full rounded-2xl text-sm font-bold shadow-lg shadow-primary/30 transition-all hover:shadow-xl hover:shadow-primary/40"
+              onClick={handleLogin}
+              disabled={loading}
+              className="h-12 w-full rounded-2xl text-sm font-bold shadow-lg shadow-primary/30 transition-all hover:shadow-xl hover:shadow-primary/40 disabled:opacity-60"
             >
-              Iniciar sesión
+              {loading ? "Ingresando…" : "Iniciar sesión"}
             </Button>
           </motion.div>
 
@@ -114,8 +151,8 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
           <motion.div whileTap={{ scale: 0.97 }}>
             <button
               type="button"
-              onClick={onLogin}
-              className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-border/60 bg-white text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary/60 hover:shadow-md"
+              disabled={loading}
+              className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-border/60 bg-white text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary/60 hover:shadow-md disabled:opacity-60"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />

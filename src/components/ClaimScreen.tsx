@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Calendar, MapPin, Send, ShieldCheck, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { mockItems } from "@/data/mockData";
+import type { FoundItem } from "@/data/mockData";
 import { itemIcons } from "@/lib/icon-registry";
 import InitialAvatar from "@/components/InitialAvatar";
+import { api } from "@/lib/api";
 
 interface ClaimScreenProps {
   itemId: string;
@@ -16,11 +17,78 @@ interface ClaimScreenProps {
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const ClaimScreen = ({ itemId, onBack }: ClaimScreenProps) => {
-  const item = mockItems.find((i) => i.id === itemId) || mockItems[0];
-  const [answers, setAnswers] = useState(["", ""]);
+  const [item, setItem] = useState<FoundItem | null>(null);
+  const [loadingItem, setLoadingItem] = useState(true);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [claimError, setClaimError] = useState("");
 
-  const handleSubmit = () => setSubmitted(true);
+  useEffect(() => {
+    setLoadingItem(true);
+    api.getItem(itemId)
+      .then((data) => {
+        setItem(data);
+        setAnswers(data.securityQuestions.map(() => ""));
+      })
+      .catch(() => setItem(null))
+      .finally(() => setLoadingItem(false));
+  }, [itemId]);
+
+  const handleSubmit = async () => {
+    if (!item) return;
+    const nonEmpty = answers.filter((a) => a.trim());
+    if (nonEmpty.length === 0) {
+      setClaimError("Responde al menos una pregunta");
+      return;
+    }
+    setSubmitting(true);
+    setClaimError("");
+    let matched = false;
+    for (const answer of nonEmpty) {
+      try {
+        const result = await api.claimItem(item.id, answer);
+        if (result.success) { matched = true; break; }
+      } catch {
+        // network error
+      }
+    }
+    if (matched) {
+      setSubmitted(true);
+    } else {
+      setClaimError("Las respuestas no coinciden. Verifica e intenta de nuevo.");
+    }
+    setSubmitting(false);
+  };
+
+  if (loadingItem) {
+    return (
+      <div className="flex h-full flex-col bg-background">
+        <div className="flex items-center gap-3 border-b border-border/60 bg-card/80 px-4 pt-4 pb-3">
+          <button type="button" onClick={onBack} className="rounded-xl p-2 text-muted-foreground">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-base font-extrabold tracking-tight text-foreground">Detalle del objeto</h1>
+        </div>
+        <div className="flex flex-1 flex-col gap-3 p-4">
+          <div className="h-44 animate-pulse rounded-[20px] bg-muted/50" />
+          <div className="h-8 animate-pulse rounded-xl bg-muted/50" />
+          <div className="h-24 animate-pulse rounded-xl bg-muted/50" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!item) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 bg-background p-8 text-center">
+        <p className="text-base font-bold text-foreground">No se encontró el objeto</p>
+        <button type="button" onClick={onBack} className="text-sm font-semibold text-primary hover:underline">
+          Volver
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -144,7 +212,7 @@ const ClaimScreen = ({ itemId, onBack }: ClaimScreenProps) => {
                       </label>
                       <Input
                         placeholder="Escribe tu respuesta"
-                        value={answers[i]}
+                        value={answers[i] ?? ""}
                         onChange={(e) => {
                           const next = [...answers];
                           next[i] = e.target.value;
@@ -156,13 +224,24 @@ const ClaimScreen = ({ itemId, onBack }: ClaimScreenProps) => {
                   ))}
                 </div>
 
+                {claimError && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive"
+                  >
+                    {claimError}
+                  </motion.p>
+                )}
+
                 <motion.div whileTap={{ scale: 0.97 }}>
                   <Button
                     onClick={handleSubmit}
-                    className="h-12 w-full gap-2 rounded-2xl text-sm font-bold shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/35"
+                    disabled={submitting}
+                    className="h-12 w-full gap-2 rounded-2xl text-sm font-bold shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/35 disabled:opacity-60"
                   >
                     <Send className="h-4 w-4" />
-                    Enviar Reclamo
+                    {submitting ? "Verificando…" : "Enviar Reclamo"}
                   </Button>
                 </motion.div>
               </motion.div>

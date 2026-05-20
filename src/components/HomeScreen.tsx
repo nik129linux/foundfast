@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, MapPin, Plus, Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { mockItems, CATEGORIES } from "@/data/mockData";
+import { CATEGORIES } from "@/data/mockData";
 import type { FoundItem } from "@/data/mockData";
 import { categoryIcons, itemIcons } from "@/lib/icon-registry";
 import InitialAvatar from "@/components/InitialAvatar";
+import { api } from "@/lib/api";
 
 interface HomeScreenProps {
   onNavigate: (screen: string, itemId?: string) => void;
@@ -20,13 +21,22 @@ const ease = [0.16, 1, 0.3, 1] as const;
 const HomeScreen = ({ onNavigate, hasNotification = true }: HomeScreenProps) => {
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [items, setItems] = useState<FoundItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredItems = mockItems.filter((item) => {
-    const matchesCategory = activeFilter === "Todos" || item.category === activeFilter;
-    const q = searchQuery.toLowerCase();
-    const matchesSearch = !q || item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q);
-    return matchesCategory && matchesSearch;
-  });
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setLoading(true);
+    api.getItems(debouncedQuery, activeFilter)
+      .then(setItems)
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
+  }, [debouncedQuery, activeFilter]);
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -107,9 +117,21 @@ const HomeScreen = ({ onNavigate, hasNotification = true }: HomeScreenProps) => 
       {/* Items list */}
       <div className="relative flex-1 overflow-y-auto px-4 py-4 pb-28">
         <AnimatePresence mode="popLayout">
-          {filteredItems.length > 0 ? (
+          {loading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-3"
+            >
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="h-28 animate-pulse rounded-[22px] bg-muted/50" />
+              ))}
+            </motion.div>
+          ) : items.length > 0 ? (
             <motion.div className="space-y-3">
-              {filteredItems.map((item, index) => (
+              {items.map((item, index) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 14 }}

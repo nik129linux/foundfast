@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CATEGORIES } from "@/data/mockData";
 import { categoryIcons } from "@/lib/icon-registry";
+import { api } from "@/lib/api";
 
 interface PublishScreenProps {
   onBack: () => void;
@@ -16,11 +17,12 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState<number[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const categories = CATEGORIES.filter((c) => c !== "Todos");
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     const newErrors: Record<string, string> = {};
     if (!title.trim()) newErrors.title = "El título es obligatorio";
     if (!selectedCategory) newErrors.category = "Selecciona una categoría";
@@ -30,7 +32,20 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
       return;
     }
     setErrors({});
-    onPublish();
+    setLoading(true);
+    try {
+      await api.createItem({
+        title: title.trim(),
+        category: selectedCategory,
+        description: description.trim(),
+        location: location.trim(),
+      });
+      onPublish();
+    } catch (e) {
+      setErrors({ general: e instanceof Error ? e.message : "Error al publicar" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -144,17 +159,24 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
             <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="date"
-              defaultValue="2026-03-24"
+              defaultValue={new Date().toISOString().slice(0, 10)}
               className="h-11 rounded-2xl bg-card pl-10"
             />
           </div>
         </div>
 
+        {errors.general && (
+          <p role="alert" className="rounded-xl bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive">
+            {errors.general}
+          </p>
+        )}
+
         <Button
           onClick={handlePublish}
-          className="h-12 w-full rounded-2xl text-base font-bold shadow-lg shadow-primary/25 transition-all active:scale-[0.98]"
+          disabled={loading}
+          className="h-12 w-full rounded-2xl text-base font-bold shadow-lg shadow-primary/25 transition-all active:scale-[0.98] disabled:opacity-60"
         >
-          Publicar Hallazgo
+          {loading ? "Publicando…" : "Publicar Hallazgo"}
         </Button>
       </div>
     </div>
