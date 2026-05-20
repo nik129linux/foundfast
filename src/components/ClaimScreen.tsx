@@ -137,7 +137,7 @@ const ClaimScreen = ({ itemId, onBack }: ClaimScreenProps) => {
               <Badge
                 className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${
                   item.status === "unclaimed"
-                    ? "border-accent/25 bg-accent/15 text-accent-foreground"
+                    ? "border-red-500/40 bg-red-50 text-red-700"
                     : "border-primary/20 bg-primary/10 text-primary"
                 }`}
               >

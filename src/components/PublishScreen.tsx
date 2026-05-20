@@ -131,9 +131,9 @@ const PublishScreen = ({ onBack, onPublish }: PublishScreenProps) => {
             onChange={(e) => setDescription(e.target.value)}
             className="h-28 w-full resize-none rounded-2xl border border-input bg-card px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
-          <div className="mt-2 flex items-start gap-2 rounded-2xl border border-accent/20 bg-accent/10 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent" />
-            <p className="text-xs text-accent font-semibold">
+          <div className="mt-2 flex items-start gap-2 rounded-2xl border border-red-500/40 bg-red-50 p-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-700" />
+            <p className="text-xs text-black font-semibold">
               Por seguridad, no incluyas datos sensibles ni fotos de documentos completos.
             </p>
           </div>

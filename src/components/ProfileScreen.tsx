@@ -104,9 +104,9 @@ const ProfileScreen = () => {
               </div>
             </div>
 
-            <div className="rounded-[18px] border border-accent/25 bg-accent/10 px-4 py-3 text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent-foreground/70">Puntos</p>
-              <div className="mt-1 flex items-center justify-end gap-1.5 text-accent-foreground">
+            <div className="rounded-[18px] border border-red-500/40 bg-red-50 px-4 py-3 text-right">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-black">Puntos</p>
+              <div className="mt-1 flex items-center justify-end gap-1.5 text-red-700">
                 <Award className="h-4 w-4" />
                 <span className="text-xl font-extrabold">{profile.points.toLocaleString()}</span>
               </div>
